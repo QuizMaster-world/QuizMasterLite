@@ -1,0 +1,13 @@
+bin/
+include/
+lib/
+venv/
+.mypy_cache/
+lib64
+None
+pyvenv.cfg
+share
+modules/__pycache__/*
+.pytest_cache
+__pycache__
+()
