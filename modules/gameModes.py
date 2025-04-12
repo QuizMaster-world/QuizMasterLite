@@ -9,6 +9,19 @@ import time
 from pygame.locals import *
 from modules.elements import *
 
+def countdown(titleofquiz, BACKGROUND_COLOUR):
+    for i in range(3, 0, -1):
+        screen.fill(BACKGROUND_COLOUR)
+        display_message(titleofquiz, QUESTION_OFFSET, 70)
+        display_message((f"{i}!"), QUESTION_OFFSET + 200, 150)
+        pygame.display.update()
+        pygame.time.delay(1000)
+    screen.fill(BACKGROUND_COLOUR)
+    display_message(("Go!"), QUESTION_OFFSET + 200, 150, BLACK)
+    pygame.display.update()
+    pygame.time.delay(1000)
+    return
+
 def show_incorrect_answers(incorrect_questions, BACKGROUND_COLOUR, BUTTON_COLOUR, BLACK):
     running = True
     total_items = len(incorrect_questions)
@@ -96,25 +109,14 @@ def classic(questionList, titleofquiz, BACKGROUND_COLOUR, BUTTON_COLOUR):
     questionIndex = 0
     correctAnswers = 0
     totalQuestions = len(questionList)
-
-    for i in range(3,0,-1):
-        screen.fill(BACKGROUND_COLOUR)
-        display_message(titleofquiz, QUESTION_OFFSET,70, BLACK)
-        display_message((f"{i}!"), QUESTION_OFFSET+200,150, BLACK)
-        pygame.display.update()
-        pygame.time.delay(1000)
-    screen.fill(BACKGROUND_COLOUR)
-    display_message(("Go!"), QUESTION_OFFSET+200, 150, BLACK)
-    pygame.display.update()
-    pygame.time.delay(1000)
-
     
+    countdown(titleofquiz, BACKGROUND_COLOUR)
+
     while running and questionIndex < totalQuestions:
         currentQuestion = questionList[questionIndex]
 
         user_answer = None
         time_remaining = currentQuestion.timeout
-        timeColour = BLACK
         
         answerOptions = [currentQuestion.correctAnswer] + currentQuestion.wrongAnswers
         random.shuffle(answerOptions)
@@ -126,14 +128,14 @@ def classic(questionList, titleofquiz, BACKGROUND_COLOUR, BUTTON_COLOUR):
 
         while running and time_remaining > 0 and user_answer is None:
             screen.fill(BACKGROUND_COLOUR)
-            display_message(f"Question {questionIndex + 1} out of {totalQuestions} : {currentQuestion.question}", QUESTION_OFFSET, 50, BLACK)
+            display_message(f"Question {questionIndex + 1} out of {totalQuestions} : {currentQuestion.question}", QUESTION_OFFSET, 50)
 
             for button in buttons:
                 button.draw(screen, BUTTON_COLOUR if user_answer is None else BACKGROUND_COLOUR)
             button_end = Button("End Quiz", (SCREEN_WIDTH // 2+350 , SCREEN_HEIGHT // 2+200), 250, 40)  
             button_go_back = Button("Main Menu", (SCREEN_WIDTH // 2+350 , SCREEN_HEIGHT // 2+250), 250, 40)
             button_leave = Button("Quit", (SCREEN_WIDTH // 2+350 , SCREEN_HEIGHT // 2+300), 250, 40)
-            display_message(f"Time remaining: {time_remaining}", SCREEN_HEIGHT - QUESTION_OFFSET, 40, timeColour)
+            display_message(f"Time remaining: {time_remaining}", SCREEN_HEIGHT - QUESTION_OFFSET, 40)
             button_end.draw(screen, BUTTON_COLOUR)
             button_go_back.draw(screen, BUTTON_COLOUR)
             button_leave.draw(screen, BUTTON_COLOUR)
@@ -146,8 +148,8 @@ def classic(questionList, titleofquiz, BACKGROUND_COLOUR, BUTTON_COLOUR):
                 if event.type == MOUSEBUTTONDOWN:
                     pos = pygame.mouse.get_pos() 
                     if button_end.is_clicked(pos):
-                       time_remaining = 0
-                       totalQuestions = questionIndex
+                        running = False
+                        break
                     if button_go_back.is_clicked(pos):
                        return
                     if button_leave.is_clicked(pos):
@@ -160,13 +162,7 @@ def classic(questionList, titleofquiz, BACKGROUND_COLOUR, BUTTON_COLOUR):
                     if event.key in [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4,pygame.K_5,pygame.K_6,pygame.K_7,pygame.K_8,pygame.K_9]:
                         user_answer = event.key - pygame.K_1
 
-                    if event.key == pygame.K_y and pygame.key.get_mods() & (pygame.KMOD_CTRL | pygame.KMOD_SHIFT):
-                        user_answer =  answerOptions.index(currentQuestion.correctAnswer)
-
             time_remaining -= 1
-            if time_remaining <= 5:
-                timeColour = (255,0,0)
-
 
         correct_answer_index = answerOptions.index(currentQuestion.correctAnswer)
         if user_answer is not None:
@@ -197,18 +193,8 @@ def classicV2(questionList, titleofquiz, BACKGROUND_COLOUR, BUTTON_COLOUR):
     
     total_time = sum(q.timeout-3 for q in questionList)+10
     start_time = time.time()
-
     
-    for i in range(3, 0, -1):
-        screen.fill(BACKGROUND_COLOUR)
-        display_message(titleofquiz, QUESTION_OFFSET, 70, BLACK)
-        display_message((f"{i}!"), QUESTION_OFFSET + 200, 150, BLACK)
-        pygame.display.update()
-        pygame.time.delay(1000)
-    screen.fill(BACKGROUND_COLOUR)
-    display_message(("Go!"), QUESTION_OFFSET + 200, 150, BLACK)
-    pygame.display.update()
-    pygame.time.delay(1000)
+    countdown(titleofquiz, BACKGROUND_COLOUR)
 
     while running and questionIndex < totalQuestions:
         currentQuestion = questionList[questionIndex]
@@ -226,25 +212,20 @@ def classicV2(questionList, titleofquiz, BACKGROUND_COLOUR, BUTTON_COLOUR):
         while running and user_answer is None:
             elapsed_time = time.time() - start_time
             time_remaining = total_time - int(elapsed_time)
-            
-            if time_remaining < total_time/totalQuestions:
-                timeColour = (255,0,0)
-            else:
-                timeColour = BLACK  
 
             if time_remaining <= 0:
                 running = False
                 break
 
             screen.fill(BACKGROUND_COLOUR)
-            display_message(f"Question {questionIndex + 1} out of {totalQuestions} : {currentQuestion.question}", QUESTION_OFFSET, 50, BLACK)
+            display_message(f"Question {questionIndex + 1} out of {totalQuestions} : {currentQuestion.question}", QUESTION_OFFSET, 50)
 
             for button in buttons:
                 button.draw(screen, BUTTON_COLOUR if user_answer is None else BACKGROUND_COLOUR)
             button_end = Button("End Quiz", (SCREEN_WIDTH // 2 + 350, SCREEN_HEIGHT // 2 + 200), 250, 40)
             button_go_back = Button("Main Menu", (SCREEN_WIDTH // 2 + 350, SCREEN_HEIGHT // 2 + 250), 250, 40)
             button_leave = Button("Quit", (SCREEN_WIDTH // 2 + 350, SCREEN_HEIGHT // 2 + 300), 250, 40)
-            display_message(f"Time remaining: {time_remaining}", SCREEN_HEIGHT - QUESTION_OFFSET, 40, timeColour)
+            display_message(f"Time remaining: {time_remaining}", SCREEN_HEIGHT - QUESTION_OFFSET, 40)
             button_end.draw(screen, BUTTON_COLOUR)
             button_go_back.draw(screen, BUTTON_COLOUR)
             button_leave.draw(screen, BUTTON_COLOUR)
@@ -270,8 +251,6 @@ def classicV2(questionList, titleofquiz, BACKGROUND_COLOUR, BUTTON_COLOUR):
                 if event.type == KEYDOWN:
                     if event.key in [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9]:
                         user_answer = event.key - pygame.K_1
-                    if event.key == pygame.K_y and pygame.key.get_mods() & (pygame.KMOD_CTRL | pygame.KMOD_SHIFT):
-                        user_answer =  answerOptions.index(currentQuestion.correctAnswer)
 
         correct_answer_index = answerOptions.index(currentQuestion.correctAnswer)
         if user_answer is not None:
@@ -299,20 +278,8 @@ def speed(questionList, titleofquiz, BACKGROUND_COLOUR, BUTTON_COLOUR):
     correctAnswers = 0
     totalQuestions = len(originalQuestions)
     lives = int(len(questionList) // 3 + 1)
-
     
-
-    for i in range(3,0,-1):
-        screen.fill(BACKGROUND_COLOUR)
-        display_message(titleofquiz, QUESTION_OFFSET,70, BLACK)
-        display_message((f"{i}!"), QUESTION_OFFSET+200,150, BLACK)
-        pygame.display.update()
-        pygame.time.delay(1000)
-    screen.fill(BACKGROUND_COLOUR)
-    display_message(("Go!"), QUESTION_OFFSET+200,150, BLACK)
-    pygame.display.update()
-    pygame.time.delay(1000) 
-    start_time = time.time()
+    countdown(titleofquiz, BACKGROUND_COLOUR)
 
     while running:
         if not questionList:
@@ -360,8 +327,6 @@ def speed(questionList, titleofquiz, BACKGROUND_COLOUR, BUTTON_COLOUR):
                 if event.type == KEYDOWN:
                     if event.key in [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9]:
                         user_answer = event.key - pygame.K_1
-                    if event.key == pygame.K_y and pygame.key.get_mods() & (pygame.KMOD_CTRL | pygame.KMOD_SHIFT):
-                        user_answer =  answerOptions.index(currentQuestion.correctAnswer)
 
         correct_answer_index = answerOptions.index(currentQuestion.correctAnswer)
         if user_answer is not None:
@@ -415,18 +380,8 @@ def survival(questionList, titleofquiz, BACKGROUND_COLOUR, BUTTON_COLOUR):
     correctAnswers = 0
     totalQuestions = len(questionList)
     lives = int(len(questionList) // 3+1)
-    
-    
-    for i in range(3, 0, -1):
-        screen.fill(BACKGROUND_COLOUR)
-        display_message(titleofquiz, QUESTION_OFFSET, 70, BLACK)
-        display_message((f"{i}!"), QUESTION_OFFSET + 200, 150, BLACK)
-        pygame.display.update()
-        pygame.time.delay(1000)
-    screen.fill(BACKGROUND_COLOUR)
-    display_message(("Go!"), QUESTION_OFFSET + 200, 150, BLACK)
-    pygame.display.update()
-    pygame.time.delay(1000)
+
+    countdown(titleofquiz, BACKGROUND_COLOUR)
     
     while running and questionIndex < totalQuestions and lives > 0:
         currentQuestion = questionList[questionIndex]
@@ -477,8 +432,6 @@ def survival(questionList, titleofquiz, BACKGROUND_COLOUR, BUTTON_COLOUR):
                 if event.type == KEYDOWN:
                     if event.key in [pygame.K_1, pygame.K_2, pygame.K_3, pygame.K_4, pygame.K_5, pygame.K_6, pygame.K_7, pygame.K_8, pygame.K_9]:
                         user_answer = event.key - pygame.K_1
-                    if event.key == pygame.K_y and pygame.key.get_mods() & (pygame.KMOD_CTRL | pygame.KMOD_SHIFT):
-                        user_answer =  answerOptions.index(currentQuestion.correctAnswer)
 
         correct_answer_index = answerOptions.index(currentQuestion.correctAnswer)
         if user_answer is not None:
@@ -507,16 +460,8 @@ def practice(questionList, titleofquiz, BACKGROUND_COLOUR, BUTTON_COLOUR):
     
     if BUTTON_COLOUR[1] > 220:
         BUTTON_COLOUR = (BUTTON_COLOUR[0], 220, BUTTON_COLOUR[2]) # Improve visibility of answer reveal
-    for i in range(3, 0, -1):
-        screen.fill(BACKGROUND_COLOUR)
-        display_message(titleofquiz, QUESTION_OFFSET, 70, BLACK)
-        display_message((f"{i}!"), QUESTION_OFFSET + 200, 150, BLACK)
-        pygame.display.update()
-        pygame.time.delay(1000)
-    screen.fill(BACKGROUND_COLOUR)
-    display_message(("Go!"), QUESTION_OFFSET + 200, 150, BLACK)
-    pygame.display.update()
-    pygame.time.delay(1000)
+    
+    countdown(titleofquiz, BACKGROUND_COLOUR)
     
     while running and questionIndex < totalQuestions:
         currentQuestion = questionList[questionIndex]
@@ -577,16 +522,6 @@ def practice(questionList, titleofquiz, BACKGROUND_COLOUR, BUTTON_COLOUR):
                         user_answer = event.key - pygame.K_1
 
         correct_answer_index = answerOptions.index(currentQuestion.correctAnswer)
-        if user_answer is not None:
-            if user_answer == correct_answer_index:
-                display_message("Correct!", SCREEN_HEIGHT // 2 + 200, 100, (0, 255, 0))
-                pygame.display.update()
-                pygame.time.wait(500)
-            else:
-                display_message("Incorrect!", SCREEN_HEIGHT // 2 + 200, 100, (255, 0, 0))
-                pygame.display.update()
-                pygame.time.wait(500)
-
         questionIndex += 1
 
     while True:

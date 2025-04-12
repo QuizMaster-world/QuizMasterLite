@@ -47,6 +47,7 @@ def preferences(BACKGROUND_COLOUR, BUTTON_COLOUR, music):
                     if volume <= 1:    
                         volume += 0.05
                     else:
+                        volume = 1
                         pass  
                     pygame.mixer.music.set_volume(volume)
                 elif button_decrease.is_clicked(pos):
@@ -54,6 +55,7 @@ def preferences(BACKGROUND_COLOUR, BUTTON_COLOUR, music):
                         volume -= 0.05
                     else:
                         if volume < 0:
+                            volume = 0
                             pass  
                     pygame.mixer.music.set_volume(volume)
                 elif button_music.is_clicked(pos):
@@ -202,7 +204,7 @@ def main(music, BACKGROUND_COLOUR, BUTTON_COLOUR):
         button_make = Button("Make a Quiz", (SCREEN_WIDTH // 2 - 400, SCREEN_HEIGHT // 2 - 50), 350, 70)
         button_preferences = Button("Preferences", (SCREEN_WIDTH // 2 - 400, SCREEN_HEIGHT // 2 + 100), 350, 70)
         button_quit = Button("Quit", (SCREEN_WIDTH // 2 + 50, SCREEN_HEIGHT // 2 + 100), 350, 70)
-        display_message("Welcome to QuizMaster!", SCREEN_HEIGHT // 8, 75, BLACK)
+        display_message("Welcome to QuizMasterLite!", SCREEN_HEIGHT // 8, 75, BLACK)
         button_make.draw(screen, BUTTON_COLOUR)
         button_play.draw(screen, BUTTON_COLOUR)
         button_preferences.draw(screen, BUTTON_COLOUR)
@@ -241,7 +243,7 @@ if __name__ == '__main__':
     BUTTON_COLOUR = tuple(map(lambda x: 255.0*x, colorsys.hsv_to_rgb(col_bg,1,1))) 
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption('QuizMaster')
+    pygame.display.set_caption('QuizMasterLite')
     pygame.mixer.init()
     pygame.mixer.music.load(music)
     pygame.mixer.music.play(-1)

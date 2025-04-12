@@ -17,7 +17,6 @@ mainWindowLayout = [
 ]
 
     
-
 mainWindow = sg.Window('Quiz Creator', mainWindowLayout)
 
 def make_questionEditorWindow():
@@ -98,7 +97,6 @@ while True:
          savedData = {"title": values['quiz_name'] , "listOfQuestions": questionList, "time given": editorValues['time_given']}
          print("saved data:", savedData)
          json.dump(savedData, file, default = vars)      
-         
          
    if event == 'Open':
      try:
